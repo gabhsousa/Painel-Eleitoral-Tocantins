@@ -5,6 +5,7 @@ import {ElectionMap} from './ElectionMap';
 import {useData,num,pct} from './useData';
 import type {Row,MapLocal,MapLocations} from './types';
 import './style.css';
+import {electoralGroup} from './partyColors';
 
 const normalize=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const localKey=(l:MapLocal)=>`${l.municipio_codigo}/${l.zona}/${l.local_codigo}`;
@@ -50,6 +51,7 @@ function App(){
           </>:<>
             <LoadState loading={summary.loading} error={summary.error}/>{s&&<Metrics data={s}/>}
             {(summary.error||points.error)&&<button className="outline-button" onClick={()=>setRetry(r=>r+1)}>Tentar novamente</button>}
+            <Results municipio={municipio} cityName={city?.name} cargo={cargo} eleicao={eleicao} cargoName={String(cargos.data?.find(c=>String(c.cargo_codigo)===cargo)?.cargo||'Presidente')}/>
             <div className="explore-heading"><h2>{municipio?'Locais de votação':'Explore os municípios'}</h2><span>{municipio?num(points.data?.total):cities.length}</span></div>
             <label className="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input aria-label={municipio?'Buscar local de votação':'Buscar município'} placeholder={municipio?'Buscar local ou código…':'Buscar município…'} value={search} onChange={e=>setSearch(e.target.value)}/></label>
             {municipio?<><LoadState loading={points.loading} error={points.error}/><div className="location-list">{filtered.map(l=><button className="location-button" key={localKey(l)} onClick={()=>chooseLocal(l)}><span className={`location-dot${l.latitude==null?' unavailable':''}`}/><div><strong>{l.local_nome}</strong><small>Zona {l.zona} · Local {l.local_codigo}</small><small>{l.status!=='Coordenadas do cadastro'?l.status:Number(l.divergencias)>0?'Código do BU divergente':l.aptos==null?'Sem BU individual':`${num(l.secoes_cadastradas)} seções cadastradas`}</small></div><span className="chevron">›</span></button>)}</div>{points.data&&filtered.length===0&&<p className="data-note">Nenhum local encontrado.</p>}</>:<><p className="list-caption">Clique no mapa ou selecione uma cidade.</p><div className="city-list">{visibleCities.map(c=><button key={c.code} onClick={()=>chooseMunicipio(c.code)}><span>{c.name}</span><span className="chevron">↗</span></button>)}</div>{geometry.data&&visibleCities.length===0&&<p className="data-note">Nenhum município encontrado.</p>}</>}
@@ -66,6 +68,33 @@ function App(){
       </section>
     </div>
   </main>;
+}
+function Results({municipio,cityName,cargo,eleicao,cargoName}:{municipio:string;cityName?:string;cargo:string;eleicao:string;cargoName:string}){
+  const [open,setOpen]=useState(false),[page,setPage]=useState(1);
+  useEffect(()=>setPage(1),[municipio,cargo,eleicao]);
+  const params=new URLSearchParams({ano:'2026',turno:'1',cargo,eleicao,pagina:String(page),limite:'10',...(municipio?{municipio}:{})});
+  const results=useData<Row[]>(open?`/api/votos?${params}`:null);
+  const total=Number(results.data?.[0]?.total_resultados||0);
+  return <details className="results-menu" onToggle={event=>setOpen(event.currentTarget.open)}>
+    <summary>Resultados <span className="results-chevron" aria-hidden="true">⌄</span></summary>
+    <div className="results-body">
+      <p className="results-scope">{cityName||'Tocantins'} · 1º turno</p>
+      <p className="results-office">{cargoName}</p>
+      <p className="data-note">Votos do {municipio?'município':'estado'}. Percentuais incluem votos brancos, nulos e de legenda.</p>
+      <LoadState loading={results.loading} error={results.error}/>
+      {!results.loading&&!results.error&&results.data?.length===0&&<p className="data-note">Sem resultados para este cargo.</p>}
+      {!results.loading&&!results.error&&results.data?.map(v=>{
+        const nominal=String(v.tipo_codigo)==='1',group=electoralGroup(v,cargo);
+        const name=String(v.tipo_codigo)==='2'?'Branco':String(v.tipo_codigo)==='3'?'Nulo':String(v.tipo_codigo)==='4'?`Legenda · ${v.partido}`:v.nome&&v.nome!=='#NULO#'?String(v.nome):'Nome indisponível';
+        return <div className="result-card" key={`${v.tipo_codigo}/${v.numero}`}>
+          <div className="result-heading"><strong>{name}</strong><span>{pct(v.percentual)}</span></div>
+          <div className="result-meta"><span>{nominal?`${v.numero} · ${group.label}`:String(v.tipo_voto)}</span><strong>{num(v.votos)} votos</strong></div>
+          <div className="result-bar" aria-hidden="true"><i style={{width:`${Math.max(0,Math.min(100,Number(v.percentual)||0))}%`,background:nominal||String(v.tipo_codigo)==='4'?group.color:'var(--muted)'}}/></div>
+        </div>;
+      })}
+      {total>10&&<div className="vote-pagination"><button className="outline-button" aria-label="Resultados anteriores" disabled={page===1||results.loading} onClick={()=>setPage(p=>p-1)}>Anterior</button><span>{page} / {Math.ceil(total/10)}</span><button className="outline-button" aria-label="Próximos resultados" disabled={page*10>=total||results.loading} onClick={()=>setPage(p=>p+1)}>Próxima</button></div>}
+    </div>
+  </details>;
 }
 function Metrics({data}:{data:Row}) {return <div className="metrics">{[['Eleitores aptos',num(data.aptos)],['Comparecimento',num(data.comparecimento)],['Abstenções',num(data.abstencoes)],['Taxa de abstenção',pct(data.percentual_abstencao)]].map(([label,value])=><div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>;}
 function LoadState({loading,error}:{loading:boolean;error:string}){return loading?<p className="load-state" role="status">Consultando dados…</p>:error?<p className="load-state error" role="alert">{error}</p>:null;}
