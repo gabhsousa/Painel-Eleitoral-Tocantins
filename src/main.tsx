@@ -52,9 +52,11 @@ function App(){
             <LoadState loading={summary.loading} error={summary.error}/>{s&&<Metrics data={s}/>}
             {(summary.error||points.error)&&<button className="outline-button" onClick={()=>setRetry(r=>r+1)}>Tentar novamente</button>}
             <Results municipio={municipio} cityName={city?.name} cargo={cargo} eleicao={eleicao} cargoName={String(cargos.data?.find(c=>String(c.cargo_codigo)===cargo)?.cargo||'Presidente')}/>
-            <div className="explore-heading"><h2>{municipio?'Locais de votação':'Explore os municípios'}</h2><span>{municipio?num(points.data?.total):cities.length}</span></div>
+            <Dropdown title="Explore os municípios" count={cities.length} enabled={!municipio}>
+            {municipio&&<div className="explore-heading"><h2>{municipio?'Locais de votação':'Explore os municípios'}</h2><span>{municipio?num(points.data?.total):cities.length}</span></div>}
             <label className="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input aria-label={municipio?'Buscar local de votação':'Buscar município'} placeholder={municipio?'Buscar local ou código…':'Buscar município…'} value={search} onChange={e=>setSearch(e.target.value)}/></label>
             {municipio?<><LoadState loading={points.loading} error={points.error}/><div className="location-list">{filtered.map(l=><button className="location-button" key={localKey(l)} onClick={()=>chooseLocal(l)}><span className={`location-dot${l.latitude==null?' unavailable':''}`}/><div><strong>{l.local_nome}</strong><small>Zona {l.zona} · Local {l.local_codigo}</small><small>{l.status!=='Coordenadas do cadastro'?l.status:Number(l.divergencias)>0?'Código do BU divergente':l.aptos==null?'Sem BU individual':`${num(l.secoes_cadastradas)} seções cadastradas`}</small></div><span className="chevron">›</span></button>)}</div>{points.data&&filtered.length===0&&<p className="data-note">Nenhum local encontrado.</p>}</>:<><p className="list-caption">Clique no mapa ou selecione uma cidade.</p><div className="city-list">{visibleCities.map(c=><button key={c.code} onClick={()=>chooseMunicipio(c.code)}><span>{c.name}</span><span className="chevron">↗</span></button>)}</div>{geometry.data&&visibleCities.length===0&&<p className="data-note">Nenhum município encontrado.</p>}</>}
+            </Dropdown>
           </>}
         </div>
         <div className="sidebar-footer">TSE · Boletins de urna e cadastro de locais</div>
@@ -69,16 +71,22 @@ function App(){
     </div>
   </main>;
 }
-function Results({municipio,cityName,cargo,eleicao,cargoName}:{municipio:string;cityName?:string;cargo:string;eleicao:string;cargoName:string}){
-  const [open,setOpen]=useState(false),[activated,setActivated]=useState(false),[page,setPage]=useState(1);
+function Dropdown({title,count,enabled=true,onOpen,children}:{title:string;count?:number;enabled?:boolean;onOpen?:()=>void;children:React.ReactNode}){
+  const [open,setOpen]=useState(false);
   const panelId=useId();
+  if(!enabled)return <>{children}</>;
+  return <section className={`results-menu${open?' is-open':''}`}>
+    <button type="button" className="results-toggle" aria-label={title} aria-expanded={open} aria-controls={panelId} onClick={()=>{if(!open)onOpen?.();setOpen(value=>!value);}}><span>{title}</span><span className="dropdown-controls">{count!==undefined&&<span className="dropdown-count">{count}</span>}<svg className="results-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
+    <div className="results-collapse" id={panelId} aria-hidden={!open} inert={!open}><div className="results-clip"><div className="results-body">{children}</div></div></div>
+  </section>;
+}
+function Results({municipio,cityName,cargo,eleicao,cargoName}:{municipio:string;cityName?:string;cargo:string;eleicao:string;cargoName:string}){
+  const [activated,setActivated]=useState(false),[page,setPage]=useState(1);
   useEffect(()=>setPage(1),[municipio,cargo,eleicao]);
   const params=new URLSearchParams({ano:'2026',turno:'1',cargo,eleicao,pagina:String(page),limite:'10',...(municipio?{municipio}:{})});
   const results=useData<Row[]>(activated?`/api/votos?${params}`:null);
   const total=Number(results.data?.[0]?.total_resultados||0);
-  return <section className={`results-menu${open?' is-open':''}`}>
-    <button type="button" className="results-toggle" aria-expanded={open} aria-controls={panelId} onClick={()=>{setActivated(true);setOpen(value=>!value);}}>Resultados<svg className="results-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
-    <div className="results-collapse" id={panelId} aria-hidden={!open} inert={!open}><div className="results-clip"><div className="results-body">
+  return <Dropdown title="Resultados" onOpen={()=>setActivated(true)}>
       <p className="results-scope">{cityName||'Tocantins'} · 1º turno</p>
       <p className="results-office">{cargoName}</p>
       <p className="data-note">Votos do {municipio?'município':'estado'}. Percentuais incluem votos brancos, nulos e de legenda.</p>
@@ -94,8 +102,7 @@ function Results({municipio,cityName,cargo,eleicao,cargoName}:{municipio:string;
         </div>;
       })}
       {total>10&&<div className="vote-pagination"><button className="outline-button" aria-label="Resultados anteriores" disabled={page===1||results.loading} onClick={()=>setPage(p=>p-1)}>Anterior</button><span>{page} / {Math.ceil(total/10)}</span><button className="outline-button" aria-label="Próximos resultados" disabled={page*10>=total||results.loading} onClick={()=>setPage(p=>p+1)}>Próxima</button></div>}
-    </div></div></div>
-  </section>;
+  </Dropdown>;
 }
 function Metrics({data}:{data:Row}) {return <div className="metrics">{[['Eleitores aptos',num(data.aptos)],['Comparecimento',num(data.comparecimento)],['Abstenções',num(data.abstencoes)],['Taxa de abstenção',pct(data.percentual_abstencao)]].map(([label,value])=><div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>;}
 function LoadState({loading,error}:{loading:boolean;error:string}){return loading?<p className="load-state" role="status">Consultando dados…</p>:error?<p className="load-state error" role="alert">{error}</p>:null;}
