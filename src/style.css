@@ -8,3 +8,5 @@
 .voting-pin.unverified{color:#ad6851}
 
 .vote-pagination{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px;font-size:10px;color:#75876b}
+
+.map-legend{flex-wrap:wrap;max-width:min(640px,70vw);gap:9px 14px}.map-legend strong{width:100%;font-size:10px;font-weight:500}.map-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;flex-shrink:0}.map-legend span{display:inline-flex;align-items:center;gap:5px}@media(max-width:760px){.map-legend{max-width:100%}.map-bottom{flex-wrap:wrap;gap:8px}}

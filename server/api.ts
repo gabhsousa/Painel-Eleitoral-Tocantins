@@ -105,6 +105,20 @@ export async function registerApi(app:FastifyInstance,pool:Pool|null) {
     // EXISTS mantém uma linha por voto; agregadas não replicam o BU da principal.
     return rows(`WITH votos AS (SELECT v.tipo_codigo,v.tipo_voto,v.numero,v.nome,v.partido_numero,v.partido,sum(v.votos) AS votos FROM eleicoes_to.votacao v WHERE ${w.sql} GROUP BY v.tipo_codigo,v.tipo_voto,v.numero,v.nome,v.partido_numero,v.partido) SELECT *,count(*) OVER() AS total_resultados,sum(votos) OVER() AS total_votos,round(100.0*votos/nullif(sum(votos) OVER(),0),2) AS percentual FROM votos ORDER BY votos DESC,tipo_codigo,numero LIMIT $${w.values.length+1} OFFSET $${w.values.length+2}`,[...w.values,f.limite,(f.pagina-1)*f.limite]);
   });
+  route('/api/mapa/vencedores',async f=>{
+    // City winners use nominal votes only, independently of the selected local.
+    const w=where({...f,municipio:undefined,zona:undefined,local:undefined,secao:undefined},'v','bu');
+    return rows(`WITH candidatos AS (
+      SELECT v.municipio_codigo,v.numero,min(v.nome) AS nome,min(v.partido) AS partido,min(v.partido_numero) AS partido_numero,sum(v.votos) AS votos
+      FROM eleicoes_to.votacao v WHERE ${w.sql} AND v.tipo_codigo='1'
+      GROUP BY v.municipio_codigo,v.numero HAVING sum(v.votos)>0
+    ), ranking AS (
+      SELECT *,rank() OVER(PARTITION BY municipio_codigo ORDER BY votos DESC) AS posicao,
+      sum(votos) OVER(PARTITION BY municipio_codigo) AS votos_nominais FROM candidatos
+    ) SELECT *,count(*) OVER(PARTITION BY municipio_codigo) AS empatados,
+      round(100.0*votos/nullif(votos_nominais,0),2) AS percentual
+      FROM ranking WHERE posicao=1 ORDER BY municipio_codigo,numero`,w.values);
+  });
   route('/api/fontes',async f=>{
     return rows(`SELECT ano,turno,concluida_em,bu,locais FROM eleicoes_to.fontes_publicas WHERE ano=$1 AND turno=$2 ORDER BY concluida_em DESC LIMIT 1`,[f.ano,f.turno]);
   });

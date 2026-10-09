@@ -1,10 +1,11 @@
 import {useEffect,useRef} from 'react';
 import L from 'leaflet';
 import type {FeatureCollection,Polygon,MultiPolygon} from 'geojson';
-import type {MapLocal} from './types';
+import {winnerColor,winnerLabel} from './partyColors';
+import type {Row,MapLocal} from './types';
 import 'leaflet/dist/leaflet.css';
 
-type Props={geometry:FeatureCollection<Polygon|MultiPolygon>;municipio:string;locations:MapLocal[];selectedLocal:string;onMunicipio:(code:string)=>void;onLocal:(local:MapLocal)=>void};
+type Props={geometry:FeatureCollection<Polygon|MultiPolygon>;municipio:string;winners:Row[];locations:MapLocal[];selectedLocal:string;onMunicipio:(code:string)=>void;onLocal:(local:MapLocal)=>void};
 const key=(l:MapLocal)=>`${l.municipio_codigo}/${l.zona}/${l.local_codigo}`;
 const pinSvg='<svg viewBox="0 0 30 36" aria-hidden="true"><path d="M15 2C8 2 3 7 3 14c0 9 12 20 12 20s12-11 12-20C27 7 22 2 15 2Z" fill="currentColor" stroke="white" stroke-width="2.5"/><circle cx="15" cy="14" r="4" fill="white"/></svg>';
 // Leaflet also culls entire offscreen polygons even with noClip enabled.
@@ -14,8 +15,10 @@ class CompleteBoundary extends L.Polygon {
   declare _parts:L.Point[][];
   _clipPoints(){this._parts=this._rings;}
 }
-export function ElectionMap({geometry,municipio,locations,selectedLocal,onMunicipio,onLocal}:Props) {
+export function ElectionMap({geometry,municipio,winners,locations,selectedLocal,onMunicipio,onLocal}:Props) {
   const element=useRef<HTMLDivElement>(null),map=useRef<L.Map|null>(null),regions=useRef<L.FeatureGroup|null>(null),pins=useRef<L.LayerGroup|null>(null),callbacks=useRef({onMunicipio,onLocal}),selection=useRef(municipio);
+  const winnerLookup=useRef(new Map<string,Row>());
+  winnerLookup.current=new Map(winners.map(w=>[String(w.municipio_codigo),w]));
   callbacks.current={onMunicipio,onLocal};selection.current=municipio;
   useEffect(()=>{
     if(!element.current)return;
@@ -33,7 +36,7 @@ export function ElectionMap({geometry,municipio,locations,selectedLocal,onMunici
       const code=String(feature.properties?.municipio_codigo),name=String(feature.properties?.nome_ibge);
       const tooltip=document.createElement('span');tooltip.textContent=name;
       layer.bindTooltip(tooltip,{sticky:true,className:'city-tooltip',direction:'top'});
-      layer.on({click:()=>callbacks.current.onMunicipio(code),mouseover:()=>{(layer as L.Path).setStyle({fillColor:selection.current===code?'#315b49':'#d7c784',weight:2});},mouseout:()=>{(layer as L.Path).setStyle({fillColor:selection.current===code?'#315b49':'#b5c9b3',weight:selection.current===code?2:1.2});}});
+      layer.on({click:()=>callbacks.current.onMunicipio(code),mouseover:()=>layer.setStyle({weight:3,color:'#203d31',fillOpacity:1}),mouseout:()=>layer.setStyle({fillColor:winnerColor(winnerLookup.current.get(code)),color:selection.current===code?'#203d31':'#f9fbf6',weight:selection.current===code?3:1.2,fillOpacity:selection.current&&selection.current!==code?.42:1})});
       layer.on('add',()=>{const path=(layer as L.Path).getElement();if(path){path.setAttribute('tabindex','0');path.setAttribute('role','button');path.setAttribute('aria-label',`Selecionar município ${name}`);path.addEventListener('keydown',e=>{const event=e as KeyboardEvent;if(event.key==='Enter'||event.key===' '){event.preventDefault();callbacks.current.onMunicipio(code);}});}});
       base.addLayer(layer);
     }
@@ -51,12 +54,22 @@ export function ElectionMap({geometry,municipio,locations,selectedLocal,onMunici
   useEffect(()=>{
     const instance=map.current,base=regions.current;if(!instance||!base)return;
     let target:L.LatLngBounds|undefined;
-    base.eachLayer(layer=>{const polygon=layer as L.Polygon & {feature:{properties:{municipio_codigo:string}}};const active=String(polygon.feature.properties.municipio_codigo)===municipio;polygon.setStyle({color:active?'#244e3e':'#f9fbf6',weight:active?2:1.2,fillColor:active?'#315b49':'#b5c9b3',fillOpacity:municipio && !active ? .42 : 1});if(active){target=polygon.getBounds();polygon.bringToFront();}});
+    base.eachLayer(layer=>{const polygon=layer as L.Polygon & {feature:{properties:{municipio_codigo:string}}};const active=String(polygon.feature.properties.municipio_codigo)===municipio;polygon.setStyle({color:active?'#244e3e':'#f9fbf6',weight:active?2:1.2,fillColor:winnerColor(winnerLookup.current.get(String(polygon.feature.properties.municipio_codigo))),fillOpacity:municipio && !active ? .42 : 1});if(active){target=polygon.getBounds();polygon.bringToFront();}});
     const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     instance.stop();
     if(reduced)instance.fitBounds(target||base.getBounds(),{padding:[45,45],maxZoom:13});
     else instance.flyToBounds(target||base.getBounds(),{padding:[45,45],maxZoom:13,duration:.65});
   },[municipio,geometry]);
+  useEffect(()=>{
+    regions.current?.eachLayer(layer=>{
+      const polygon=layer as L.Polygon & {feature:{properties:{municipio_codigo:string;nome_ibge:string}}};
+      const code=String(polygon.feature.properties.municipio_codigo),active=code===municipio,winner=winnerLookup.current.get(code);
+      polygon.setStyle({fillColor:winnerColor(winner),fillOpacity:municipio&&!active?.42:1});
+      const label=document.createElement('span');label.textContent=`${polygon.feature.properties.nome_ibge} · ${winnerLabel(winner)}`;
+      polygon.setTooltipContent(label);
+      polygon.getElement()?.setAttribute('aria-label',`Selecionar município ${label.textContent}`);
+    });
+  },[winners,municipio,geometry]);
   useEffect(()=>{
     const group=pins.current;if(!group)return;group.clearLayers();
     const clusters=new Map<string,MapLocal[]>();
