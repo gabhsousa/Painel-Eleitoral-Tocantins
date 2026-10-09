@@ -16,7 +16,7 @@ Não reexecute `scripts/provision-readonly.mjs` no servidor atual: o usuário j�
 
 Frontend e API serão executados na VPS, publicados pelo único `cloudflared` da VPS. PostgreSQL permanece no servidor local `sv01` (`100.73.87.91` na Tailscale). As redes Docker listadas anteriormente pertencem ao sv01 e não devem ser utilizadas como configuração da VPS. O nome Docker `postgres_main` não resolve entre servidores.
 
-Na VPS, identificar a rede do único túnel:
+Rede confirmada na VPS: `automation`, compartilhada pelo único `cloudflared`. A aplicação será conectada a essa rede, sem publicar a porta 3000. Para conferir novamente:
 
 ```sh
 docker ps --format '{{.Names}} | {{.Image}} | {{.Networks}}'
@@ -53,7 +53,7 @@ Use `deploy/compose.yml` como stack Docker Compose/Standalone, não Swarm. Confi
 | `APP_IMAGE` | `consulta-eleitoral-to:0.1.0` |
 | `DB_HOST` | Endpoint privado do banco do sv01, alcançável pelo container na VPS |
 | `DB_PORT` | Porta do endpoint privado ou túnel persistente |
-| `TUNNEL_NETWORK` | Rede do único cloudflared da VPS |
+| `TUNNEL_NETWORK` | `automation` |
 | `PGPASSWORD` | Senha de `eleitoral_to_readonly` em `.env.deploy` |
 
 O compose não tem `ports`. A aplicação fica acessível apenas nas redes internas, na porta 3000. Possui filesystem somente leitura, `cap_drop: ALL`, `no-new-privileges`, memória limitada, logs rotacionados e reinício automático. A senha é configurada no Portainer, não incluída na imagem.

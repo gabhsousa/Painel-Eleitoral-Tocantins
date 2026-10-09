@@ -39,4 +39,4 @@ services:
 networks:
   tunnel:
     external: true
-    name: ${TUNNEL_NETWORK:?Informe a rede do único Cloudflare Tunnel da VPS}
+    name: ${TUNNEL_NETWORK:-automation}
