@@ -5,7 +5,6 @@ import {ElectionMap} from './ElectionMap';
 import {useData,num,pct} from './useData';
 import type {Row,MapLocal,MapLocations} from './types';
 import './style.css';
-import {electoralGroup} from './partyColors';
 
 const normalize=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const localKey=(l:MapLocal)=>`${l.municipio_codigo}/${l.zona}/${l.local_codigo}`;
@@ -17,7 +16,6 @@ function App(){
   const eleicao=String(cargos.data?.find(c=>String(c.cargo_codigo)===cargo)?.eleicao_codigo||(cargo==='1'?'6257':'6259'));
   const params=new URLSearchParams({ano:'2026',turno:'1',cargo,eleicao,pagina:String(retry+1),...(municipio?{municipio}:{})});
   const winners=useData<Row[]>(`/api/mapa/vencedores?ano=2026&turno=1&cargo=${cargo}&eleicao=${eleicao}&pagina=${retry+1}`);
-  const winningParties=Array.from(new Map((winners.data||[]).map(w=>{const group=electoralGroup(w,cargo);return [group.label,group];})).values()).sort((a,b)=>a.label.localeCompare(b.label));
   const summary=useData<Row>(`/api/resumo?${params}`);
   const points=useData<MapLocations>(municipio?`/api/mapa/locais?${params}`:null);
   const detailParams=selected?new URLSearchParams({ano:'2026',turno:'1',cargo,eleicao,municipio:String(selected.municipio_codigo),zona:String(selected.zona)}):null;
@@ -62,7 +60,7 @@ function App(){
         {(geometry.loading||geometry.error)&&<div className="map-loading"><LoadState loading={geometry.loading} error={geometry.error}/></div>}
         <div className="map-breadcrumb"><span>TOCANTINS</span>{city&&<><span className="crumb-divider">/</span><strong>{city.name}</strong></>}</div>
         {municipio?<button className="reset-map" onClick={()=>chooseMunicipio('')}>↖ Ver todo o Tocantins</button>:<div className="map-instruction"><span className="instruction-icon">↗</span><div><strong>Comece pelo mapa</strong><span>Clique em um município para aproximar.</span></div></div>}
-        <div className="map-bottom"><div className="map-legend"><strong>Mais votado no município</strong>{winners.loading?<span>Carregando resultados…</span>:winners.error?<span role="alert">Resultados indisponíveis</span>:winningParties.map(p=><span key={p.label}><i style={{background:p.color}}/>{p.label}</span>)}{municipio&&<span><i className="legend-point"/> Local de votação</span>}</div><div className="map-caption">{municipio?points.loading?'Carregando locais…':points.error?'Locais indisponíveis':`${points.data?.mapeados??0} locais no mapa`:'139 municípios mapeados'}</div></div>
+        <div className="map-bottom"><div className="map-caption">{municipio?points.loading?'Carregando locais…':points.error?'Locais indisponíveis':`${points.data?.mapeados??0} locais no mapa`:'139 municípios mapeados'}</div></div>
       </section>
     </div>
   </main>;
