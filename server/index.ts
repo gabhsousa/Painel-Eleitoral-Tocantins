@@ -15,7 +15,14 @@ const pool=createPool();
 if(production){
   if(!pool)throw new Error('Credencial de leitura PostgreSQL obrigatória em produção.');
   if(!existsSync(resolve('dist/index.html')))throw new Error('Frontend compilado ausente.');
-  await assertReadOnlyRole(pool).catch(async()=>{await pool.end();throw new Error('Conexão de produção rejeitada: verifique disponibilidade e permissões mínimas do banco.');});
+  await assertReadOnlyRole(pool).catch(async(error:unknown)=>{
+    const rawCode=(error as {code?:unknown})?.code;
+    const code=typeof rawCode==='string'&&/^[A-Z0-9_]{1,64}$/.test(rawCode)?rawCode:'DB_CHECK_FAILED';
+    // Log only a diagnostic code; never log the original error or credentials.
+    app.log.error({code},'Verificação de produção do banco falhou');
+    await pool.end();
+    throw new Error('Conexão de produção rejeitada: verifique disponibilidade e permissões mínimas do banco.');
+  });
 }
 await app.register(helmet,{
   contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'https://fonts.gstatic.com'],imgSrc:["'self'",'data:'],connectSrc:["'self'"],frameAncestors:["'none'"],objectSrc:["'none'"],baseUri:["'self'"],formAction:["'none'"],upgradeInsecureRequests:null}},
