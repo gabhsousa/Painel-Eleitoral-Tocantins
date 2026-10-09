@@ -1,0 +1,839 @@
+{
+  "matched": [
+    {
+      "municipio_codigo": "73008",
+      "municipio": "ABREULÂNDIA",
+      "ibge_codigo": "1700251",
+      "nome_ibge": "Abreulândia"
+    },
+    {
+      "municipio_codigo": "73512",
+      "municipio": "AGUIARNÓPOLIS",
+      "ibge_codigo": "1700301",
+      "nome_ibge": "Aguiarnópolis"
+    },
+    {
+      "municipio_codigo": "96954",
+      "municipio": "ALIANÇA DO TOCANTINS",
+      "ibge_codigo": "1700350",
+      "nome_ibge": "Aliança do Tocantins"
+    },
+    {
+      "municipio_codigo": "92070",
+      "municipio": "ALMAS",
+      "ibge_codigo": "1700400",
+      "nome_ibge": "Almas"
+    },
+    {
+      "municipio_codigo": "92134",
+      "municipio": "ALVORADA",
+      "ibge_codigo": "1700707",
+      "nome_ibge": "Alvorada"
+    },
+    {
+      "municipio_codigo": "92193",
+      "municipio": "ANANÁS",
+      "ibge_codigo": "1701002",
+      "nome_ibge": "Ananás"
+    },
+    {
+      "municipio_codigo": "73075",
+      "municipio": "ANGICO",
+      "ibge_codigo": "1701051",
+      "nome_ibge": "Angico"
+    },
+    {
+      "municipio_codigo": "96970",
+      "municipio": "APARECIDA DO RIO NEGRO",
+      "ibge_codigo": "1701101",
+      "nome_ibge": "Aparecida do Rio Negro"
+    },
+    {
+      "municipio_codigo": "73334",
+      "municipio": "ARAGOMINAS",
+      "ibge_codigo": "1701309",
+      "nome_ibge": "Aragominas"
+    },
+    {
+      "municipio_codigo": "92371",
+      "municipio": "ARAGUACEMA",
+      "ibge_codigo": "1701903",
+      "nome_ibge": "Araguacema"
+    },
+    {
+      "municipio_codigo": "92398",
+      "municipio": "ARAGUAÇU",
+      "ibge_codigo": "1702000",
+      "nome_ibge": "Araguaçu"
+    },
+    {
+      "municipio_codigo": "92410",
+      "municipio": "ARAGUAÍNA",
+      "ibge_codigo": "1702109",
+      "nome_ibge": "Araguaína"
+    },
+    {
+      "municipio_codigo": "73318",
+      "municipio": "ARAGUANÃ",
+      "ibge_codigo": "1702158",
+      "nome_ibge": "Araguanã"
+    },
+    {
+      "municipio_codigo": "92436",
+      "municipio": "ARAGUATINS",
+      "ibge_codigo": "1702208",
+      "nome_ibge": "Araguatins"
+    },
+    {
+      "municipio_codigo": "92452",
+      "municipio": "ARAPOEMA",
+      "ibge_codigo": "1702307",
+      "nome_ibge": "Arapoema"
+    },
+    {
+      "municipio_codigo": "92479",
+      "municipio": "ARRAIAS",
+      "ibge_codigo": "1702406",
+      "nome_ibge": "Arraias"
+    },
+    {
+      "municipio_codigo": "96857",
+      "municipio": "AUGUSTINÓPOLIS",
+      "ibge_codigo": "1702554",
+      "nome_ibge": "Augustinópolis"
+    },
+    {
+      "municipio_codigo": "92533",
+      "municipio": "AURORA DO TOCANTINS",
+      "ibge_codigo": "1702703",
+      "nome_ibge": "Aurora do Tocantins"
+    },
+    {
+      "municipio_codigo": "92576",
+      "municipio": "AXIXÁ DO TOCANTINS",
+      "ibge_codigo": "1702901",
+      "nome_ibge": "Axixá do Tocantins"
+    },
+    {
+      "municipio_codigo": "92592",
+      "municipio": "BABAÇULÂNDIA",
+      "ibge_codigo": "1703008",
+      "nome_ibge": "Babaçulândia"
+    },
+    {
+      "municipio_codigo": "73580",
+      "municipio": "BANDEIRANTES DO TOCANTINS",
+      "ibge_codigo": "1703057",
+      "nome_ibge": "Bandeirantes do Tocantins"
+    },
+    {
+      "municipio_codigo": "73610",
+      "municipio": "BARRA DO OURO",
+      "ibge_codigo": "1703073",
+      "nome_ibge": "Barra do Ouro"
+    },
+    {
+      "municipio_codigo": "96997",
+      "municipio": "BARROLÂNDIA",
+      "ibge_codigo": "1703107",
+      "nome_ibge": "Barrolândia"
+    },
+    {
+      "municipio_codigo": "92002",
+      "municipio": "BERNARDO SAYÃO",
+      "ibge_codigo": "1703206",
+      "nome_ibge": "Bernardo Sayão"
+    },
+    {
+      "municipio_codigo": "73121",
+      "municipio": "BOM JESUS DO TOCANTINS",
+      "ibge_codigo": "1703305",
+      "nome_ibge": "Bom Jesus do Tocantins"
+    },
+    {
+      "municipio_codigo": "73245",
+      "municipio": "BRASILÂNDIA DO TOCANTINS",
+      "ibge_codigo": "1703602",
+      "nome_ibge": "Brasilândia do Tocantins"
+    },
+    {
+      "municipio_codigo": "92738",
+      "municipio": "BREJINHO DE NAZARÉ",
+      "ibge_codigo": "1703701",
+      "nome_ibge": "Brejinho de Nazaré"
+    },
+    {
+      "municipio_codigo": "92045",
+      "municipio": "BURITI DO TOCANTINS",
+      "ibge_codigo": "1703800",
+      "nome_ibge": "Buriti do Tocantins"
+    },
+    {
+      "municipio_codigo": "73067",
+      "municipio": "CACHOEIRINHA",
+      "ibge_codigo": "1703826",
+      "nome_ibge": "Cachoeirinha"
+    },
+    {
+      "municipio_codigo": "73091",
+      "municipio": "CAMPOS LINDOS",
+      "ibge_codigo": "1703842",
+      "nome_ibge": "Campos Lindos"
+    },
+    {
+      "municipio_codigo": "73300",
+      "municipio": "CARIRI DO TOCANTINS",
+      "ibge_codigo": "1703867",
+      "nome_ibge": "Cariri do Tocantins"
+    },
+    {
+      "municipio_codigo": "73326",
+      "municipio": "CARMOLÂNDIA",
+      "ibge_codigo": "1703883",
+      "nome_ibge": "Carmolândia"
+    },
+    {
+      "municipio_codigo": "73423",
+      "municipio": "CARRASCO BONITO",
+      "ibge_codigo": "1703891",
+      "nome_ibge": "Carrasco Bonito"
+    },
+    {
+      "municipio_codigo": "92088",
+      "municipio": "CASEARA",
+      "ibge_codigo": "1703909",
+      "nome_ibge": "Caseara"
+    },
+    {
+      "municipio_codigo": "73210",
+      "municipio": "CENTENÁRIO",
+      "ibge_codigo": "1704105",
+      "nome_ibge": "Centenário"
+    },
+    {
+      "municipio_codigo": "73482",
+      "municipio": "CHAPADA DA NATIVIDADE",
+      "ibge_codigo": "1705102",
+      "nome_ibge": "Chapada da Natividade"
+    },
+    {
+      "municipio_codigo": "73474",
+      "municipio": "CHAPADA DE AREIA",
+      "ibge_codigo": "1704600",
+      "nome_ibge": "Chapada de Areia"
+    },
+    {
+      "municipio_codigo": "93114",
+      "municipio": "COLINAS DO TOCANTINS",
+      "ibge_codigo": "1705508",
+      "nome_ibge": "Colinas do Tocantins"
+    },
+    {
+      "municipio_codigo": "95290",
+      "municipio": "COLMÉIA",
+      "ibge_codigo": "1716703",
+      "nome_ibge": "Colméia"
+    },
+    {
+      "municipio_codigo": "92142",
+      "municipio": "COMBINADO",
+      "ibge_codigo": "1705557",
+      "nome_ibge": "Combinado"
+    },
+    {
+      "municipio_codigo": "93130",
+      "municipio": "CONCEIÇÃO DO TOCANTINS",
+      "ibge_codigo": "1705607",
+      "nome_ibge": "Conceição do Tocantins"
+    },
+    {
+      "municipio_codigo": "93211",
+      "municipio": "COUTO MAGALHÃES",
+      "ibge_codigo": "1706001",
+      "nome_ibge": "Couto Magalhães"
+    },
+    {
+      "municipio_codigo": "93238",
+      "municipio": "CRISTALÂNDIA",
+      "ibge_codigo": "1706100",
+      "nome_ibge": "Cristalândia"
+    },
+    {
+      "municipio_codigo": "73555",
+      "municipio": "CRIXÁS DO TOCANTINS",
+      "ibge_codigo": "1706258",
+      "nome_ibge": "Crixás do Tocantins"
+    },
+    {
+      "municipio_codigo": "73032",
+      "municipio": "DARCINÓPOLIS",
+      "ibge_codigo": "1706506",
+      "nome_ibge": "Darcinópolis"
+    },
+    {
+      "municipio_codigo": "93416",
+      "municipio": "DIANÓPOLIS",
+      "ibge_codigo": "1707009",
+      "nome_ibge": "Dianópolis"
+    },
+    {
+      "municipio_codigo": "92185",
+      "municipio": "DIVINÓPOLIS DO TOCANTINS",
+      "ibge_codigo": "1707108",
+      "nome_ibge": "Divinópolis do Tocantins"
+    },
+    {
+      "municipio_codigo": "93459",
+      "municipio": "DOIS IRMÃOS DO TOCANTINS",
+      "ibge_codigo": "1707207",
+      "nome_ibge": "Dois Irmãos do Tocantins"
+    },
+    {
+      "municipio_codigo": "93475",
+      "municipio": "DUERÉ",
+      "ibge_codigo": "1707306",
+      "nome_ibge": "Dueré"
+    },
+    {
+      "municipio_codigo": "73296",
+      "municipio": "ESPERANTINA",
+      "ibge_codigo": "1707405",
+      "nome_ibge": "Esperantina"
+    },
+    {
+      "municipio_codigo": "96830",
+      "municipio": "FÁTIMA",
+      "ibge_codigo": "1707553",
+      "nome_ibge": "Fátima"
+    },
+    {
+      "municipio_codigo": "96679",
+      "municipio": "FIGUEIRÓPOLIS",
+      "ibge_codigo": "1707652",
+      "nome_ibge": "Figueirópolis"
+    },
+    {
+      "municipio_codigo": "93556",
+      "municipio": "FILADÉLFIA",
+      "ibge_codigo": "1707702",
+      "nome_ibge": "Filadélfia"
+    },
+    {
+      "municipio_codigo": "93653",
+      "municipio": "FORMOSO DO ARAGUAIA",
+      "ibge_codigo": "1708205",
+      "nome_ibge": "Formoso do Araguaia"
+    },
+    {
+      "municipio_codigo": "92240",
+      "municipio": "GOIANORTE",
+      "ibge_codigo": "1708304",
+      "nome_ibge": "Goianorte"
+    },
+    {
+      "municipio_codigo": "95338",
+      "municipio": "GOIATINS",
+      "ibge_codigo": "1709005",
+      "nome_ibge": "Goiatins"
+    },
+    {
+      "municipio_codigo": "96270",
+      "municipio": "GUARAÍ",
+      "ibge_codigo": "1709302",
+      "nome_ibge": "Guaraí"
+    },
+    {
+      "municipio_codigo": "93858",
+      "municipio": "GURUPI",
+      "ibge_codigo": "1709500",
+      "nome_ibge": "Gurupi"
+    },
+    {
+      "municipio_codigo": "73598",
+      "municipio": "IPUEIRAS",
+      "ibge_codigo": "1709807",
+      "nome_ibge": "Ipueiras"
+    },
+    {
+      "municipio_codigo": "94056",
+      "municipio": "ITACAJÁ",
+      "ibge_codigo": "1710508",
+      "nome_ibge": "Itacajá"
+    },
+    {
+      "municipio_codigo": "94099",
+      "municipio": "ITAGUATINS",
+      "ibge_codigo": "1710706",
+      "nome_ibge": "Itaguatins"
+    },
+    {
+      "municipio_codigo": "73202",
+      "municipio": "ITAPIRATINS",
+      "ibge_codigo": "1710904",
+      "nome_ibge": "Itapiratins"
+    },
+    {
+      "municipio_codigo": "94170",
+      "municipio": "ITAPORÃ DO TOCANTINS",
+      "ibge_codigo": "1711100",
+      "nome_ibge": "Itaporã do Tocantins"
+    },
+    {
+      "municipio_codigo": "73369",
+      "municipio": "JAÚ DO TOCANTINS",
+      "ibge_codigo": "1711506",
+      "nome_ibge": "Jaú do Tocantins"
+    },
+    {
+      "municipio_codigo": "73253",
+      "municipio": "JUARINA",
+      "ibge_codigo": "1711803",
+      "nome_ibge": "Juarina"
+    },
+    {
+      "municipio_codigo": "73385",
+      "municipio": "LAGOA DA CONFUSÃO",
+      "ibge_codigo": "1711902",
+      "nome_ibge": "Lagoa da Confusão"
+    },
+    {
+      "municipio_codigo": "73113",
+      "municipio": "LAGOA DO TOCANTINS",
+      "ibge_codigo": "1711951",
+      "nome_ibge": "Lagoa do Tocantins"
+    },
+    {
+      "municipio_codigo": "73407",
+      "municipio": "LAJEADO",
+      "ibge_codigo": "1712009",
+      "nome_ibge": "Lajeado"
+    },
+    {
+      "municipio_codigo": "73601",
+      "municipio": "LAVANDEIRA",
+      "ibge_codigo": "1712157",
+      "nome_ibge": "Lavandeira"
+    },
+    {
+      "municipio_codigo": "95699",
+      "municipio": "LIZARDA",
+      "ibge_codigo": "1712405",
+      "nome_ibge": "Lizarda"
+    },
+    {
+      "municipio_codigo": "73520",
+      "municipio": "LUZINÓPOLIS",
+      "ibge_codigo": "1712454",
+      "nome_ibge": "Luzinópolis"
+    },
+    {
+      "municipio_codigo": "92304",
+      "municipio": "MARIANÓPOLIS DO TOCANTINS",
+      "ibge_codigo": "1712504",
+      "nome_ibge": "Marianópolis do Tocantins"
+    },
+    {
+      "municipio_codigo": "73270",
+      "municipio": "MATEIROS",
+      "ibge_codigo": "1712702",
+      "nome_ibge": "Mateiros"
+    },
+    {
+      "municipio_codigo": "73059",
+      "municipio": "MAURILÂNDIA DO TOCANTINS",
+      "ibge_codigo": "1712801",
+      "nome_ibge": "Maurilândia do Tocantins"
+    },
+    {
+      "municipio_codigo": "94617",
+      "municipio": "MIRACEMA DO TOCANTINS",
+      "ibge_codigo": "1713205",
+      "nome_ibge": "Miracema do Tocantins"
+    },
+    {
+      "municipio_codigo": "94633",
+      "municipio": "MIRANORTE",
+      "ibge_codigo": "1713304",
+      "nome_ibge": "Miranorte"
+    },
+    {
+      "municipio_codigo": "94692",
+      "municipio": "MONTE DO CARMO",
+      "ibge_codigo": "1713601",
+      "nome_ibge": "Monte do Carmo"
+    },
+    {
+      "municipio_codigo": "73563",
+      "municipio": "MONTE SANTO DO TOCANTINS",
+      "ibge_codigo": "1713700",
+      "nome_ibge": "Monte Santo do Tocantins"
+    },
+    {
+      "municipio_codigo": "73342",
+      "municipio": "MURICILÂNDIA",
+      "ibge_codigo": "1713957",
+      "nome_ibge": "Muricilândia"
+    },
+    {
+      "municipio_codigo": "94811",
+      "municipio": "NATIVIDADE",
+      "ibge_codigo": "1714203",
+      "nome_ibge": "Natividade"
+    },
+    {
+      "municipio_codigo": "94838",
+      "municipio": "NAZARÉ",
+      "ibge_codigo": "1714302",
+      "nome_ibge": "Nazaré"
+    },
+    {
+      "municipio_codigo": "96636",
+      "municipio": "NOVA OLINDA",
+      "ibge_codigo": "1714880",
+      "nome_ibge": "Nova Olinda"
+    },
+    {
+      "municipio_codigo": "92401",
+      "municipio": "NOVA ROSALÂNDIA",
+      "ibge_codigo": "1715002",
+      "nome_ibge": "Nova Rosalândia"
+    },
+    {
+      "municipio_codigo": "94994",
+      "municipio": "NOVO ACORDO",
+      "ibge_codigo": "1715101",
+      "nome_ibge": "Novo Acordo"
+    },
+    {
+      "municipio_codigo": "73148",
+      "municipio": "NOVO ALEGRE",
+      "ibge_codigo": "1715150",
+      "nome_ibge": "Novo Alegre"
+    },
+    {
+      "municipio_codigo": "73172",
+      "municipio": "NOVO JARDIM",
+      "ibge_codigo": "1715259",
+      "nome_ibge": "Novo Jardim"
+    },
+    {
+      "municipio_codigo": "73466",
+      "municipio": "OLIVEIRA DE FÁTIMA",
+      "ibge_codigo": "1715507",
+      "nome_ibge": "Oliveira de Fátima"
+    },
+    {
+      "municipio_codigo": "73440",
+      "municipio": "PALMAS",
+      "ibge_codigo": "1721000",
+      "nome_ibge": "Palmas"
+    },
+    {
+      "municipio_codigo": "73083",
+      "municipio": "PALMEIRANTE",
+      "ibge_codigo": "1715705",
+      "nome_ibge": "Palmeirante"
+    },
+    {
+      "municipio_codigo": "73040",
+      "municipio": "PALMEIRAS DO TOCANTINS",
+      "ibge_codigo": "1713809",
+      "nome_ibge": "Palmeiras do Tocantins"
+    },
+    {
+      "municipio_codigo": "96490",
+      "municipio": "PALMEIRÓPOLIS",
+      "ibge_codigo": "1715754",
+      "nome_ibge": "Palmeirópolis"
+    },
+    {
+      "municipio_codigo": "95192",
+      "municipio": "PARAÍSO DO TOCANTINS",
+      "ibge_codigo": "1716109",
+      "nome_ibge": "Paraíso do Tocantins"
+    },
+    {
+      "municipio_codigo": "95214",
+      "municipio": "PARANÃ",
+      "ibge_codigo": "1716208",
+      "nome_ibge": "Paranã"
+    },
+    {
+      "municipio_codigo": "73261",
+      "municipio": "PAU D'ARCO",
+      "ibge_codigo": "1716307",
+      "nome_ibge": "Pau D'Arco"
+    },
+    {
+      "municipio_codigo": "95257",
+      "municipio": "PEDRO AFONSO",
+      "ibge_codigo": "1716505",
+      "nome_ibge": "Pedro Afonso"
+    },
+    {
+      "municipio_codigo": "95273",
+      "municipio": "PEIXE",
+      "ibge_codigo": "1716604",
+      "nome_ibge": "Peixe"
+    },
+    {
+      "municipio_codigo": "92487",
+      "municipio": "PEQUIZEIRO",
+      "ibge_codigo": "1716653",
+      "nome_ibge": "Pequizeiro"
+    },
+    {
+      "municipio_codigo": "95370",
+      "municipio": "PINDORAMA DO TOCANTINS",
+      "ibge_codigo": "1717008",
+      "nome_ibge": "Pindorama do Tocantins"
+    },
+    {
+      "municipio_codigo": "73016",
+      "municipio": "PIRAQUÊ",
+      "ibge_codigo": "1717206",
+      "nome_ibge": "Piraquê"
+    },
+    {
+      "municipio_codigo": "95478",
+      "municipio": "PIUM",
+      "ibge_codigo": "1717503",
+      "nome_ibge": "Pium"
+    },
+    {
+      "municipio_codigo": "95516",
+      "municipio": "PONTE ALTA DO BOM JESUS",
+      "ibge_codigo": "1717800",
+      "nome_ibge": "Ponte Alta do Bom Jesus"
+    },
+    {
+      "municipio_codigo": "95532",
+      "municipio": "PONTE ALTA DO TOCANTINS",
+      "ibge_codigo": "1717909",
+      "nome_ibge": "Ponte Alta do Tocantins"
+    },
+    {
+      "municipio_codigo": "92509",
+      "municipio": "PORTO ALEGRE DO TOCANTINS",
+      "ibge_codigo": "1718006",
+      "nome_ibge": "Porto Alegre do Tocantins"
+    },
+    {
+      "municipio_codigo": "95591",
+      "municipio": "PORTO NACIONAL",
+      "ibge_codigo": "1718204",
+      "nome_ibge": "Porto Nacional"
+    },
+    {
+      "municipio_codigo": "92525",
+      "municipio": "PRAIA NORTE",
+      "ibge_codigo": "1718303",
+      "nome_ibge": "Praia Norte"
+    },
+    {
+      "municipio_codigo": "96296",
+      "municipio": "PRESIDENTE KENNEDY",
+      "ibge_codigo": "1718402",
+      "nome_ibge": "Presidente Kennedy"
+    },
+    {
+      "municipio_codigo": "73571",
+      "municipio": "PUGMIL",
+      "ibge_codigo": "1718451",
+      "nome_ibge": "Pugmil"
+    },
+    {
+      "municipio_codigo": "73229",
+      "municipio": "RECURSOLÂNDIA",
+      "ibge_codigo": "1718501",
+      "nome_ibge": "Recursolândia"
+    },
+    {
+      "municipio_codigo": "73024",
+      "municipio": "RIACHINHO",
+      "ibge_codigo": "1718550",
+      "nome_ibge": "Riachinho"
+    },
+    {
+      "municipio_codigo": "73431",
+      "municipio": "RIO DA CONCEIÇÃO",
+      "ibge_codigo": "1718659",
+      "nome_ibge": "Rio da Conceição"
+    },
+    {
+      "municipio_codigo": "73415",
+      "municipio": "RIO DOS BOIS",
+      "ibge_codigo": "1718709",
+      "nome_ibge": "Rio dos Bois"
+    },
+    {
+      "municipio_codigo": "96792",
+      "municipio": "RIO SONO",
+      "ibge_codigo": "1718758",
+      "nome_ibge": "Rio Sono"
+    },
+    {
+      "municipio_codigo": "92541",
+      "municipio": "SAMPAIO",
+      "ibge_codigo": "1718808",
+      "nome_ibge": "Sampaio"
+    },
+    {
+      "municipio_codigo": "73156",
+      "municipio": "SANDOLÂNDIA",
+      "ibge_codigo": "1718840",
+      "nome_ibge": "Sandolândia"
+    },
+    {
+      "municipio_codigo": "73350",
+      "municipio": "SANTA FÉ DO ARAGUAIA",
+      "ibge_codigo": "1718865",
+      "nome_ibge": "Santa Fé do Araguaia"
+    },
+    {
+      "municipio_codigo": "73130",
+      "municipio": "SANTA MARIA DO TOCANTINS",
+      "ibge_codigo": "1718881",
+      "nome_ibge": "Santa Maria do Tocantins"
+    },
+    {
+      "municipio_codigo": "73547",
+      "municipio": "SANTA RITA DO TOCANTINS",
+      "ibge_codigo": "1718899",
+      "nome_ibge": "Santa Rita do Tocantins"
+    },
+    {
+      "municipio_codigo": "92584",
+      "municipio": "SANTA ROSA DO TOCANTINS",
+      "ibge_codigo": "1718907",
+      "nome_ibge": "Santa Rosa do Tocantins"
+    },
+    {
+      "municipio_codigo": "92606",
+      "municipio": "SANTA TEREZA DO TOCANTINS",
+      "ibge_codigo": "1719004",
+      "nome_ibge": "Santa Tereza do Tocantins"
+    },
+    {
+      "municipio_codigo": "73539",
+      "municipio": "SANTA TEREZINHA DO TOCANTINS",
+      "ibge_codigo": "1720002",
+      "nome_ibge": "Santa Terezinha do Tocantins"
+    },
+    {
+      "municipio_codigo": "73288",
+      "municipio": "SÃO BENTO DO TOCANTINS",
+      "ibge_codigo": "1720101",
+      "nome_ibge": "São Bento do Tocantins"
+    },
+    {
+      "municipio_codigo": "73105",
+      "municipio": "SÃO FÉLIX DO TOCANTINS",
+      "ibge_codigo": "1720150",
+      "nome_ibge": "São Félix do Tocantins"
+    },
+    {
+      "municipio_codigo": "73180",
+      "municipio": "SÃO MIGUEL DO TOCANTINS",
+      "ibge_codigo": "1720200",
+      "nome_ibge": "São Miguel do Tocantins"
+    },
+    {
+      "municipio_codigo": "73393",
+      "municipio": "SÃO SALVADOR DO TOCANTINS",
+      "ibge_codigo": "1720259",
+      "nome_ibge": "São Salvador do Tocantins"
+    },
+    {
+      "municipio_codigo": "96032",
+      "municipio": "SÃO SEBASTIÃO DO TOCANTINS",
+      "ibge_codigo": "1720309",
+      "nome_ibge": "São Sebastião do Tocantins"
+    },
+    {
+      "municipio_codigo": "92681",
+      "municipio": "SÃO VALÉRIO",
+      "ibge_codigo": "1720499",
+      "nome_ibge": "São Valério"
+    },
+    {
+      "municipio_codigo": "96598",
+      "municipio": "SILVANÓPOLIS",
+      "ibge_codigo": "1720655",
+      "nome_ibge": "Silvanópolis"
+    },
+    {
+      "municipio_codigo": "96130",
+      "municipio": "SÍTIO NOVO DO TOCANTINS",
+      "ibge_codigo": "1720804",
+      "nome_ibge": "Sítio Novo do Tocantins"
+    },
+    {
+      "municipio_codigo": "73377",
+      "municipio": "SUCUPIRA",
+      "ibge_codigo": "1720853",
+      "nome_ibge": "Sucupira"
+    },
+    {
+      "municipio_codigo": "73199",
+      "municipio": "TABOCÃO",
+      "ibge_codigo": "1708254",
+      "nome_ibge": "Tabocão"
+    },
+    {
+      "municipio_codigo": "96156",
+      "municipio": "TAGUATINGA",
+      "ibge_codigo": "1720903",
+      "nome_ibge": "Taguatinga"
+    },
+    {
+      "municipio_codigo": "73164",
+      "municipio": "TAIPAS DO TOCANTINS",
+      "ibge_codigo": "1720937",
+      "nome_ibge": "Taipas do Tocantins"
+    },
+    {
+      "municipio_codigo": "73504",
+      "municipio": "TALISMÃ",
+      "ibge_codigo": "1720978",
+      "nome_ibge": "Talismã"
+    },
+    {
+      "municipio_codigo": "96199",
+      "municipio": "TOCANTÍNIA",
+      "ibge_codigo": "1721109",
+      "nome_ibge": "Tocantínia"
+    },
+    {
+      "municipio_codigo": "96210",
+      "municipio": "TOCANTINÓPOLIS",
+      "ibge_codigo": "1721208",
+      "nome_ibge": "Tocantinópolis"
+    },
+    {
+      "municipio_codigo": "73458",
+      "municipio": "TUPIRAMA",
+      "ibge_codigo": "1721257",
+      "nome_ibge": "Tupirama"
+    },
+    {
+      "municipio_codigo": "73237",
+      "municipio": "TUPIRATINS",
+      "ibge_codigo": "1721307",
+      "nome_ibge": "Tupiratins"
+    },
+    {
+      "municipio_codigo": "96652",
+      "municipio": "WANDERLÂNDIA",
+      "ibge_codigo": "1722081",
+      "nome_ibge": "Wanderlândia"
+    },
+    {
+      "municipio_codigo": "96431",
+      "municipio": "XAMBIOÁ",
+      "ibge_codigo": "1722107",
+      "nome_ibge": "Xambioá"
+    }
+  ],
+  "unmatched": []
+}

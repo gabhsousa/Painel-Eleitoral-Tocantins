@@ -1,0 +1,14 @@
+node_modules
+dist
+build
+secrets
+deploy
+scripts
+database
+.codex
+.agents
+*.tar
+.git
+.env
+.env.*
+*.log

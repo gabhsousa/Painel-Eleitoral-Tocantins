@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+secrets/
+deploy/*.env
+*.tar
+database/security-db-audit.json
+.env
+.env.*
+!.env.example
+*.log
+*.tar.gz

@@ -1,0 +1,7 @@
+{
+  "geometryUrl": "https://servicodados.ibge.gov.br/api/v3/malhas/estados/17?formato=application/vnd.geo%2Bjson&qualidade=maxima&intrarregiao=municipio",
+  "namesUrl": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/17/municipios",
+  "downloadedAt": "2026-10-09T15:11:12.165Z",
+  "quality": "maxima",
+  "municipalities": 139
+}
