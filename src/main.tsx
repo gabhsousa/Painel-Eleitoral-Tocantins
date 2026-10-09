@@ -1,4 +1,4 @@
-import React,{useCallback,useEffect,useState} from 'react';
+import React,{useCallback,useEffect,useId,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import type {FeatureCollection,Polygon,MultiPolygon} from 'geojson';
 import {ElectionMap} from './ElectionMap';
@@ -70,14 +70,15 @@ function App(){
   </main>;
 }
 function Results({municipio,cityName,cargo,eleicao,cargoName}:{municipio:string;cityName?:string;cargo:string;eleicao:string;cargoName:string}){
-  const [open,setOpen]=useState(false),[page,setPage]=useState(1);
+  const [open,setOpen]=useState(false),[activated,setActivated]=useState(false),[page,setPage]=useState(1);
+  const panelId=useId();
   useEffect(()=>setPage(1),[municipio,cargo,eleicao]);
   const params=new URLSearchParams({ano:'2026',turno:'1',cargo,eleicao,pagina:String(page),limite:'10',...(municipio?{municipio}:{})});
-  const results=useData<Row[]>(open?`/api/votos?${params}`:null);
+  const results=useData<Row[]>(activated?`/api/votos?${params}`:null);
   const total=Number(results.data?.[0]?.total_resultados||0);
-  return <details className="results-menu" onToggle={event=>setOpen(event.currentTarget.open)}>
-    <summary>Resultados <span className="results-chevron" aria-hidden="true">⌄</span></summary>
-    <div className="results-body">
+  return <section className={`results-menu${open?' is-open':''}`}>
+    <button type="button" className="results-toggle" aria-expanded={open} aria-controls={panelId} onClick={()=>{setActivated(true);setOpen(value=>!value);}}>Resultados<svg className="results-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div className="results-collapse" id={panelId} aria-hidden={!open} inert={!open}><div className="results-clip"><div className="results-body">
       <p className="results-scope">{cityName||'Tocantins'} · 1º turno</p>
       <p className="results-office">{cargoName}</p>
       <p className="data-note">Votos do {municipio?'município':'estado'}. Percentuais incluem votos brancos, nulos e de legenda.</p>
@@ -93,8 +94,8 @@ function Results({municipio,cityName,cargo,eleicao,cargoName}:{municipio:string;
         </div>;
       })}
       {total>10&&<div className="vote-pagination"><button className="outline-button" aria-label="Resultados anteriores" disabled={page===1||results.loading} onClick={()=>setPage(p=>p-1)}>Anterior</button><span>{page} / {Math.ceil(total/10)}</span><button className="outline-button" aria-label="Próximos resultados" disabled={page*10>=total||results.loading} onClick={()=>setPage(p=>p+1)}>Próxima</button></div>}
-    </div>
-  </details>;
+    </div></div></div>
+  </section>;
 }
 function Metrics({data}:{data:Row}) {return <div className="metrics">{[['Eleitores aptos',num(data.aptos)],['Comparecimento',num(data.comparecimento)],['Abstenções',num(data.abstencoes)],['Taxa de abstenção',pct(data.percentual_abstencao)]].map(([label,value])=><div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>;}
 function LoadState({loading,error}:{loading:boolean;error:string}){return loading?<p className="load-state" role="status">Consultando dados…</p>:error?<p className="load-state error" role="alert">{error}</p>:null;}
