@@ -53,8 +53,8 @@ function App(){
             {(summary.error||points.error)&&<button className="outline-button" onClick={()=>setRetry(r=>r+1)}>Tentar novamente</button>}
             <Results municipio={municipio} cityName={city?.name} cargo={cargo} eleicao={eleicao} cargoName={String(cargos.data?.find(c=>String(c.cargo_codigo)===cargo)?.cargo||'Presidente')}/>
             {municipio&&<div className="explore-heading"><h2>{municipio?'Locais de votação':'Explore os municípios'}</h2><span>{municipio?num(points.data?.total):cities.length}</span></div>}
-            <label className="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input aria-label={municipio?'Buscar local de votação':'Buscar município'} placeholder={municipio?'Buscar local ou código…':'Buscar município…'} value={search} onChange={e=>setSearch(e.target.value)}/></label>
-            <Dropdown title="Explore os municípios" count={cities.length} enabled={!municipio}>
+            <Dropdown title="Explore os municípios" count={cities.length} enabled={!municipio} expandWhen={search} visibleContent={!municipio?<label className="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input aria-label={municipio?'Buscar local de votação':'Buscar município'} placeholder={municipio?'Buscar local ou código…':'Buscar município…'} value={search} onChange={e=>setSearch(e.target.value)}/></label>:undefined}>
+            {municipio&&<label className="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input aria-label={municipio?'Buscar local de votação':'Buscar município'} placeholder={municipio?'Buscar local ou código…':'Buscar município…'} value={search} onChange={e=>setSearch(e.target.value)}/></label>}
             {municipio?<><LoadState loading={points.loading} error={points.error}/><div className="location-list">{filtered.map(l=><button className="location-button" key={localKey(l)} onClick={()=>chooseLocal(l)}><span className={`location-dot${l.latitude==null?' unavailable':''}`}/><div><strong>{l.local_nome}</strong><small>Zona {l.zona} · Local {l.local_codigo}</small><small>{l.status!=='Coordenadas do cadastro'?l.status:Number(l.divergencias)>0?'Código do BU divergente':l.aptos==null?'Sem BU individual':`${num(l.secoes_cadastradas)} seções cadastradas`}</small></div><span className="chevron">›</span></button>)}</div>{points.data&&filtered.length===0&&<p className="data-note">Nenhum local encontrado.</p>}</>:<><p className="list-caption">Clique no mapa ou selecione uma cidade.</p><div className="city-list">{visibleCities.map(c=><button key={c.code} onClick={()=>chooseMunicipio(c.code)}><span>{c.name}</span><span className="chevron">↗</span></button>)}</div>{geometry.data&&visibleCities.length===0&&<p className="data-note">Nenhum município encontrado.</p>}</>}
             </Dropdown>
           </>}
@@ -71,12 +71,14 @@ function App(){
     </div>
   </main>;
 }
-function Dropdown({title,count,enabled=true,onOpen,children}:{title:string;count?:number;enabled?:boolean;onOpen?:()=>void;children:React.ReactNode}){
+function Dropdown({title,count,enabled=true,onOpen,expandWhen,visibleContent,children}:{title:string;count?:number;enabled?:boolean;onOpen?:()=>void;expandWhen?:string;visibleContent?:React.ReactNode;children:React.ReactNode}){
   const [open,setOpen]=useState(false);
   const panelId=useId();
+  useEffect(()=>{if(expandWhen?.trim())setOpen(true);},[expandWhen]);
   if(!enabled)return <>{children}</>;
   return <section className={`results-menu${open?' is-open':''}`}>
     <button type="button" className="results-toggle" aria-label={title} aria-expanded={open} aria-controls={panelId} onClick={()=>{if(!open)onOpen?.();setOpen(value=>!value);}}><span>{title}</span><span className="dropdown-controls">{count!==undefined&&<span className="dropdown-count">{count}</span>}<svg className="results-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button>
+    {visibleContent&&<div className="dropdown-visible">{visibleContent}</div>}
     <div className="results-collapse" id={panelId} aria-hidden={!open} inert={!open}><div className="results-clip"><div className="results-body">{children}</div></div></div>
   </section>;
 }
