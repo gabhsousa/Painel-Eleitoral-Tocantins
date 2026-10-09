@@ -10,3 +10,7 @@ database/security-db-audit.json
 !.env.example
 *.log
 *.tar.gz
+
+database/*.json
+
+deploy/*.sha256
