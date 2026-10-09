@@ -23,6 +23,7 @@ npm run build
 npm run build:server
 node scripts/test-api.mjs
 node --import tsx scripts/test-map.mjs
+node --import tsx --test scripts/test-map-cache.mjs
 ```
 
 Para testar o servidor compilado em produção com o banco pelo túnel local, execute em um terminal:
@@ -53,7 +54,7 @@ Atualizar a malha: `node --env-file=.env scripts/prepare-map.mjs`. As migrations
 
 - Consultas parametrizadas, tipos e filtros validados, UF restrita a TO, nenhuma rota SQL genérica ou exposição de raw JSONB/telefones.
 - Pool de 3 conexões, timeout SQL de 15 segundos, lock timeout de 3 segundos, no máximo 12 consultas diferentes pendentes.
-- Cache interno de 60 segundos, até 200 entradas e 16 MiB. APIs recebem `Cache-Control: no-store`; a aplicação controla a consistência internamente.
+- Cache interno de 60 segundos, até 200 entradas e 16 MiB. As cores dos cinco cargos são preparadas antes de abrir a porta; entradas vencidas das cores são atualizadas em segundo plano e só podem ser reaproveitadas por até 5 minutos desde a consulta. O navegador reutiliza as cores por até 60 segundos e antecipa os outros cargos após carregar o selecionado. APIs recebem `Cache-Control: no-store`; a aplicação controla a consistência internamente.
 - Limite de 120 chamadas de API por minuto por IP, CSP e outros cabeçalhos de proteção, sem CORS aberto.
 - Produção rejeita credenciais administrativas, escrita, leitura de dados brutos, outros schemas ou herança de roles.
 - Logs não registram URLs de consulta, senhas, connection strings ou respostas do banco; erros entregam mensagens genéricas.

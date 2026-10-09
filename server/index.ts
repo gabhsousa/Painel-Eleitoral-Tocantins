@@ -53,7 +53,7 @@ app.get('/api/status',async(_request,reply)=>{
   try{await pool.query('SELECT 1');return {status:'conectado',message:'Conectado ao banco eleitoral do Tocantins.'};}
   catch{return reply.code(503).send({status:'indisponivel',message:'Não foi possível conectar ao banco.'});}
 });
-await registerApi(app,pool);
+const api=await registerApi(app,pool);
 app.get('/api/*',async(_request,reply)=>reply.code(404).send({error:'ROTA_INEXISTENTE'}));
 if(existsSync(resolve('dist'))){
   await app.register(fastifyStatic,{root:resolve('dist'),dotfiles:'deny',list:false,setHeaders: (response,path)=>{
@@ -70,4 +70,5 @@ app.setErrorHandler((error,request,reply)=>{
 });
 app.addHook('onClose',async()=>{await pool?.end();});
 for(const signal of ['SIGTERM','SIGINT'] as const)process.on(signal,()=>{void app.close();});
+if(pool)await api.warmMapColors().catch(()=>app.log.warn('Cache inicial das cores indisponível; as consultas continuam sob demanda'));
 await app.listen({port:Number(process.env.PORT||3000),host:process.env.HOST||(production?'0.0.0.0':'127.0.0.1')});

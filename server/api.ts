@@ -10,6 +10,14 @@ export async function registerApi(app:FastifyInstance,pool:Pool|null) {
   const cacheSizes=new Map<string,number>();
   let cacheBytes=0;
   function evict(key:string){cache.delete(key);cacheBytes-=cacheSizes.get(key)||0;cacheSizes.delete(key);}
+  function cacheKey(path:string,f:Filters){return path+JSON.stringify(path==='/api/mapa/vencedores'?{ano:f.ano,turno:f.turno,cargo:f.cargo,eleicao:f.eleicao||''}:Object.entries(f).sort(([a],[b])=>a.localeCompare(b)));}
+  function saveCache(key:string,data:unknown){
+    const size=Buffer.byteLength(JSON.stringify(data));
+    if(size>2*1024*1024)return;
+    if(cache.has(key))evict(key);
+    while(cache.size&&(cache.size>=200||cacheBytes+size>16*1024*1024))evict(cache.keys().next().value!);
+    cache.set(key,{until:Date.now()+60000,data});cacheSizes.set(key,size);cacheBytes+=size;
+  }
   function where(f:Filters,alias:string,kind:'local'|'bu'|'identified'='identified') {
     const values:unknown[]=[f.ano,f.turno];
     const clauses=[`${alias}.ano=$1`,`${alias}.turno=$2`,`${alias}.uf='TO'`];
@@ -31,8 +39,16 @@ export async function registerApi(app:FastifyInstance,pool:Pool|null) {
         if(!/^\d{1,12}$/.test(codigo))return reply.code(400).send({message:'Código de local inválido.'});
         f.local=codigo.replace(/^0+(?=\d)/,'');
       }
-      const key=path+JSON.stringify(f);const saved=cache.get(key);
+      const key=cacheKey(path,f);const saved=cache.get(key);
       if(saved&&saved.until>Date.now())return saved.data;
+      // Keep colors responsive during refresh; never serve entries older than 5 minutes.
+      if(saved&&path==='/api/mapa/vencedores'&&saved.until+240000>Date.now()){
+        if(!pending.has(key)&&pending.size<12){
+          const refresh=handler(f).then(data=>{saveCache(key,data);return data;}).catch(()=>request.log.warn('Atualização das cores temporariamente indisponível')).finally(()=>pending.delete(key));
+          pending.set(key,refresh);
+        }
+        return saved.data;
+      }
       if(saved)evict(key);
       try {
         let work=pending.get(key);
@@ -41,12 +57,7 @@ export async function registerApi(app:FastifyInstance,pool:Pool|null) {
           work=handler(f);pending.set(key,work);
         }
         const data=await work;
-        const size=Buffer.byteLength(JSON.stringify(data));
-        if(size<=2*1024*1024){
-          if(cache.has(key))evict(key);
-          while(cache.size&&(cache.size>=200||cacheBytes+size>16*1024*1024))evict(cache.keys().next().value!);
-          cache.set(key,{until:Date.now()+60000,data});cacheSizes.set(key,size);cacheBytes+=size;
-        }
+        saveCache(key,data);
         return data;
       }catch(error){request.log.error({code:(error as {code?:string}).code},'Consulta eleitoral falhou');return reply.code(503).send({message:'Não foi possível concluir a consulta. Tente novamente.'});}
       finally{pending.delete(key);}
@@ -105,7 +116,7 @@ export async function registerApi(app:FastifyInstance,pool:Pool|null) {
     // EXISTS mantém uma linha por voto; agregadas não replicam o BU da principal.
     return rows(`WITH votos AS (SELECT v.tipo_codigo,v.tipo_voto,v.numero,v.nome,v.partido_numero,v.partido,sum(v.votos) AS votos FROM eleicoes_to.votacao v WHERE ${w.sql} GROUP BY v.tipo_codigo,v.tipo_voto,v.numero,v.nome,v.partido_numero,v.partido) SELECT *,count(*) OVER() AS total_resultados,sum(votos) OVER() AS total_votos,round(100.0*votos/nullif(sum(votos) OVER(),0),2) AS percentual FROM votos ORDER BY votos DESC,tipo_codigo,numero LIMIT $${w.values.length+1} OFFSET $${w.values.length+2}`,[...w.values,f.limite,(f.pagina-1)*f.limite]);
   });
-  route('/api/mapa/vencedores',async f=>{
+  async function mapWinners(f:Filters){
     // City winners use nominal votes only, independently of the selected local.
     const w=where({...f,municipio:undefined,zona:undefined,local:undefined,secao:undefined},'v','bu');
     return rows(`WITH candidatos AS (
@@ -118,8 +129,17 @@ export async function registerApi(app:FastifyInstance,pool:Pool|null) {
     ) SELECT *,count(*) OVER(PARTITION BY municipio_codigo) AS empatados,
       round(100.0*votos/nullif(votos_nominais,0),2) AS percentual
       FROM ranking WHERE posicao=1 ORDER BY municipio_codigo,numero`,w.values);
-  });
+  }
+  route('/api/mapa/vencedores',mapWinners);
   route('/api/fontes',async f=>{
     return rows(`SELECT ano,turno,concluida_em,bu,locais FROM eleicoes_to.fontes_publicas WHERE ano=$1 AND turno=$2 ORDER BY concluida_em DESC LIMIT 1`,[f.ano,f.turno]);
   });
+  return {warmMapColors:async()=>{
+    if(!pool)return;
+    const offices=await rows(`SELECT DISTINCT ano,turno,cargo_codigo,eleicao_codigo FROM eleicoes_to.comparecimento WHERE ano=2026 AND turno=1 AND uf='TO'`);
+    for(const office of offices){
+      const f:Filters={ano:Number(office.ano),turno:Number(office.turno),cargo:String(office.cargo_codigo),eleicao:String(office.eleicao_codigo),pagina:1,limite:20};
+      saveCache(cacheKey('/api/mapa/vencedores',f),await mapWinners(f));
+    }
+  }};
 }

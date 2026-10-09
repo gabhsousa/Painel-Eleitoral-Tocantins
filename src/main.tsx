@@ -2,7 +2,7 @@ import React,{useCallback,useEffect,useId,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import type {FeatureCollection,Polygon,MultiPolygon} from 'geojson';
 import {ElectionMap} from './ElectionMap';
-import {useData,num,pct} from './useData';
+import {useData,prefetchData,num,pct} from './useData';
 import type {Row,MapLocal,MapLocations} from './types';
 import './style.css';
 import {electoralGroup} from './partyColors';
@@ -19,6 +19,13 @@ function App(){
   const eleicao=String(cargos.data?.find(c=>String(c.cargo_codigo)===cargo)?.eleicao_codigo||(cargo==='1'?'6257':'6259'));
   const params=new URLSearchParams({ano:'2026',turno:'1',cargo,eleicao,pagina:String(retry+1),...(municipio?{municipio}:{})});
   const winners=useData<Row[]>(`/api/mapa/vencedores?ano=2026&turno=1&cargo=${cargo}&eleicao=${eleicao}&pagina=${retry+1}`);
+  useEffect(()=>{
+    if(!cargos.data||!winners.data)return;
+    const offices=cargos.data;
+    let active=true;
+    void(async()=>{for(const office of offices){if(!active)break;const code=String(office.cargo_codigo);if(code===cargo)continue;try{await prefetchData(`/api/mapa/vencedores?ano=2026&turno=1&cargo=${code}&eleicao=${office.eleicao_codigo}&pagina=${retry+1}`);}catch{}}})();
+    return()=>{active=false;};
+  },[cargos.data,winners.data,cargo,retry]);
   const summary=useData<Row>(`/api/resumo?${params}`);
   const points=useData<MapLocations>(municipio?`/api/mapa/locais?${params}`:null);
   const detailParams=selected?new URLSearchParams({ano:'2026',turno:'1',cargo,eleicao,municipio:String(selected.municipio_codigo),zona:String(selected.zona)}):null;

@@ -34,9 +34,10 @@ export function ElectionMap({geometry,municipio,cargo,theme,winners,locations,se
     const base=L.featureGroup();
     for(const feature of geometry.features){
       const latlngs=L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates,feature.geometry.type==='Polygon'?1:2);
-      const layer=new CompleteBoundary(latlngs,{renderer,noClip:true,smoothFactor:1.5,color:'#f9fbf6',weight:1.2,fillColor:'#9daec3',fillOpacity:1}) as CompleteBoundary & {feature:typeof feature};
+      const code=String(feature.properties?.municipio_codigo);
+      const layer=new CompleteBoundary(latlngs,{renderer,noClip:true,smoothFactor:1.5,color:'#f9fbf6',weight:1.2,fillColor:winnerColor(winnerLookup.current.get(code),office.current),fillOpacity:1}) as CompleteBoundary & {feature:typeof feature};
       layer.feature=feature;
-      const code=String(feature.properties?.municipio_codigo),name=String(feature.properties?.nome_ibge);
+      const name=String(feature.properties?.nome_ibge);
       const tooltip=document.createElement('span');tooltip.textContent=name;
       layer.bindTooltip(tooltip,{sticky:true,className:'city-tooltip',direction:'top'});
       layer.on({click:()=>callbacks.current.onMunicipio(code),mouseover:()=>layer.setStyle({weight:3,color:activeBorder(),fillOpacity:1}),mouseout:()=>layer.setStyle({fillColor:winnerColor(winnerLookup.current.get(code),office.current),color:selection.current===code?activeBorder():'#f9fbf6',weight:selection.current===code?3:1.2,fillOpacity:selection.current&&selection.current!==code?.42:1})});
