@@ -22,7 +22,14 @@ Rede confirmada na VPS: `automation`, compartilhada pelo único `cloudflared`. A
 docker ps --format '{{.Names}} | {{.Image}} | {{.Networks}}'
 ```
 
-A conexão ao banco deverá usar uma rota privada entre VPS e sv01, preferencialmente Tailscale com acesso restrito, ou um túnel SSH persistente. A existência do túnel no Mac não atende à VPS. Confirmar Tailscale, publicação/listener atual do PostgreSQL e acesso a partir do container antes de definir `DB_HOST` e `DB_PORT`. Se PostgreSQL escuta somente em localhost no sv01, usar um túnel SSH persistente sem publicar 5432 na Internet. Chaves SSH, host keys e reinício do túnel devem ser configurados antes de subir a aplicação.
+Conexão privada validada pelo usuário a partir de um container da VPS na rede `automation`: `100.73.87.91:15432`. PostgreSQL permanece publicado somente em `127.0.0.1:5432` no sv01. O encaminhamento é feito pelo Tailscale Serve:
+
+```sh
+sudo tailscale serve --bg --tcp=15432 tcp://127.0.0.1:5432
+tailscale serve status
+```
+
+O modo `--bg` persiste após reinícios. Não habilitar Funnel para o banco. Restringir a política de acesso da tailnet para permitir a VPS (`100.83.58.96`) acessar TCP 15432 no sv01; revisar regras amplas existentes, pois adicionar uma regra específica não revoga permissões prévias. Disponibilidade da aplicação depende do sv01, do PostgreSQL e da Tailscale.
 
 A aplicação acessará a rede do cloudflared da VPS; nenhuma rede Docker do banco local será conectada diretamente. O Compose exige o endpoint privado do banco como variável e não pressupõe que ele já exista.
 
@@ -51,8 +58,8 @@ Use `deploy/compose.yml` como stack Docker Compose/Standalone, não Swarm. Confi
 | Variável | Valor |
 |---|---|
 | `APP_IMAGE` | `consulta-eleitoral-to:0.1.0` |
-| `DB_HOST` | Endpoint privado do banco do sv01, alcançável pelo container na VPS |
-| `DB_PORT` | Porta do endpoint privado ou túnel persistente |
+| `DB_HOST` | `100.73.87.91` |
+| `DB_PORT` | `15432` |
 | `TUNNEL_NETWORK` | `automation` |
 | `PGPASSWORD` | Senha de `eleitoral_to_readonly` em `.env.deploy` |
 
