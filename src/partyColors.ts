@@ -16,7 +16,7 @@ export function electoralGroup(winner:Row,cargo:string){
   const federation=deputy?FEDERATIONS.find(f=>f.parties.includes(party)):undefined;
   return federation?{label:federation.label,color:federation.color}:{label:String(winner.partido||'Partido indisponível'),color:(deputy?DEPUTY_COLORS:PARTY_COLORS)[party]||'#94a3b8'};
 }
-export function winnerColor(winner?:Row,cargo='1'){return winner?electoralGroup(winner,cargo).color:'#b5c9b3';}
+export function winnerColor(winner?:Row,cargo='1'){return winner?electoralGroup(winner,cargo).color:'#9daec3';}
 export function winnerLabel(winner?:Row,cargo='1'){
   if(!winner)return 'Sem resultado nominal';
   if(Number(winner.empatados)>1)return 'Empate no primeiro lugar';

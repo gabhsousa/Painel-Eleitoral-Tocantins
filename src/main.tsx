@@ -1,4 +1,4 @@
-import React,{useCallback,useState} from 'react';
+import React,{useCallback,useEffect,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import type {FeatureCollection,Polygon,MultiPolygon} from 'geojson';
 import {ElectionMap} from './ElectionMap';
@@ -10,6 +10,8 @@ const normalize=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').to
 const localKey=(l:MapLocal)=>`${l.municipio_codigo}/${l.zona}/${l.local_codigo}`;
 const emptyLocations:MapLocal[]=[];
 function App(){
+  const [theme,setTheme]=useState<'light'|'dark'>(()=>{try{const saved=localStorage.getItem('eleitoral-theme');if(saved==='light'||saved==='dark')return saved;}catch{}return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';});
+  useEffect(()=>{document.documentElement.dataset.theme=theme;try{localStorage.setItem('eleitoral-theme',theme);}catch{}},[theme]);
   const [municipio,setMunicipio]=useState(''),[cargo,setCargo]=useState('1'),[search,setSearch]=useState(''),[selected,setSelected]=useState<MapLocal|null>(null),[retry,setRetry]=useState(0),[votePage,setVotePage]=useState(1);
   const geometry=useData<FeatureCollection<Polygon|MultiPolygon>>('/maps/tocantins.geojson');
   const cargos=useData<Row[]>('/api/cargos');
@@ -30,7 +32,7 @@ function App(){
   const visibleCities=cities.filter(c=>normalize(c.name).includes(normalize(search)));
   const s=summary.data;
   return <main className="dashboard">
-    <header className="app-header"><a className="brand" href="/" aria-label="Consulta Eleitoral Tocantins">TO<span>●</span><div>CONSULTA ELEITORAL</div></a><div className="header-context"><span className="live-dot"/> Dados do TSE <span className="election-badge">2026 · 1º turno</span></div></header>
+    <header className="app-header"><a className="brand" href="/" aria-label="Consulta Eleitoral Tocantins">TO<span>●</span><div>CONSULTA ELEITORAL</div></a><div className="header-context"><span className="live-dot"/> Dados do TSE <span className="election-badge">2026 · 1º turno</span><button className="theme-toggle" aria-label={theme==='light'?'Ativar modo escuro':'Ativar modo claro'} title={theme==='light'?'Modo escuro':'Modo claro'} aria-pressed={theme==='dark'} onClick={()=>setTheme(t=>t==='light'?'dark':'light')}>{theme==='light'?'☾':'☀'}</button></div></header>
     <div className="workspace">
       <aside className="sidebar" aria-label="Dados e navegação eleitoral">
         <div className="sidebar-top"><p className="eyebrow">MAPA ELEITORAL</p><h1>{city?.name||'Tocantins'}</h1>{municipio&&<p className="subtitle">Município TSE {municipio} · IBGE {city?.ibge}</p>}<label className="cargo-label">Cargo<select value={cargo} onChange={e=>{setCargo(e.target.value);setSelected(null);setVotePage(1);}}>{(cargos.data||[{cargo_codigo:'1',cargo:'Presidente'}]).map(c=><option key={String(c.cargo_codigo)} value={String(c.cargo_codigo)}>{c.cargo}</option>)}</select></label></div>
@@ -56,7 +58,7 @@ function App(){
         <div className="sidebar-footer">TSE · Boletins de urna e cadastro de locais</div>
       </aside>
       <section className="map-stage" aria-label="Exploração geográfica">
-        {geometry.data&&<ElectionMap geometry={geometry.data} winners={winners.data||[]} cargo={cargo} municipio={municipio} locations={locais} selectedLocal={selected?localKey(selected):''} onMunicipio={chooseMunicipio} onLocal={chooseLocal}/>}
+        {geometry.data&&<ElectionMap geometry={geometry.data} winners={winners.data||[]} cargo={cargo} theme={theme} municipio={municipio} locations={locais} selectedLocal={selected?localKey(selected):''} onMunicipio={chooseMunicipio} onLocal={chooseLocal}/>}
         {(geometry.loading||geometry.error)&&<div className="map-loading"><LoadState loading={geometry.loading} error={geometry.error}/></div>}
         <div className="map-breadcrumb"><span>TOCANTINS</span>{city&&<><span className="crumb-divider">/</span><strong>{city.name}</strong></>}</div>
         {municipio?<button className="reset-map" onClick={()=>chooseMunicipio('')}>↖ Ver todo o Tocantins</button>:<div className="map-instruction"><span className="instruction-icon">↗</span><div><strong>Comece pelo mapa</strong><span>Clique em um município para aproximar.</span></div></div>}
