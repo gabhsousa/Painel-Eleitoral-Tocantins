@@ -63,6 +63,8 @@ Use `deploy/compose.yml` como stack Docker Compose/Standalone, não Swarm. Confi
 | `TUNNEL_NETWORK` | `automation` |
 | `PGPASSWORD` | Senha de `eleitoral_to_readonly` em `.env.deploy` |
 
+A imagem precisa existir no mesmo endpoint Docker usado pelo Portainer. O Compose usa `pull_policy: never`; desabilite também qualquer opção do Portainer de sempre baixar imagens ao recriar a stack. Se ocorrer `pull access denied`, confira a imagem local e essa opção antes de tentar novamente.
+
 O compose não tem `ports`. A aplicação fica acessível apenas nas redes internas, na porta 3000. Possui filesystem somente leitura, `cap_drop: ALL`, `no-new-privileges`, memória limitada, logs rotacionados e reinício automático. A senha é configurada no Portainer, não incluída na imagem.
 
 O backend também suporta `PGPASSWORD_FILE` para setups com Docker Secrets; nesse caso, monte o arquivo somente leitura e não configure `PGPASSWORD`. O caminho padrão pode ser `/run/secrets/postgres_password`. A stack padrão usa variável do Portainer para funcionar em Compose Standalone sem assumir uma configuração de Secrets já existente.

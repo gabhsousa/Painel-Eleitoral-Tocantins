@@ -1,6 +1,8 @@
 services:
   mapaeleitoral:
     image: ${APP_IMAGE:?Defina APP_IMAGE com a imagem compilada e tag de versão}
+    # Imagem construída na VPS; não buscar no Docker Hub.
+    pull_policy: never
     restart: unless-stopped
     init: true
     read_only: true
