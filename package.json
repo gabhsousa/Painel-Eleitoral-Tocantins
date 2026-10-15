@@ -10,7 +10,14 @@
     "start": "node --env-file-if-exists=.env --import tsx server/index.ts",
     "build:server": "tsc -p tsconfig.server.json",
     "start:prod": "node build/server/index.js",
-    "test:security": "node --env-file=.env --import tsx --test scripts/security.test.mjs"
+    "test:security": "node --env-file-if-exists=.env --import tsx --test tests/integration/security.test.mjs",
+    "check": "npm run typecheck && npm run format:check && npm test",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "test": "node --import tsx --test tests/unit/*.test.mjs",
+    "test:integration": "node --env-file-if-exists=.env --import tsx --test --test-concurrency=1 tests/integration/*.test.mjs",
+    "format": "prettier --write src server tests scripts docs package.json tsconfig*.json vite.config.ts index.html README.md .prettierrc.json",
+    "format:check": "prettier --check src server tests scripts docs package.json tsconfig*.json vite.config.ts index.html README.md .prettierrc.json",
+    "benchmark:maps": "node --env-file-if-exists=.env --import tsx scripts/benchmark/map-queries.mjs"
   },
   "dependencies": {
     "@fastify/helmet": "^13.1.2",
@@ -29,6 +36,7 @@
     "@types/pg": "^8.11.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "prettier": "3.6.2",
     "tsx": "^4.23.15",
     "typescript": "^5.7.0",
     "vite": "^6.0.0"

@@ -1,6 +1,6 @@
 # Deploy — mapaeleitoral.sejafast.com
 
-Aplicação pública na VPS, servida pelo Cloudflare Tunnel da VPS. O banco continua sendo `VTXMkting` no container `postgres_main` do servidor local sv01. Este preparo não publicou a aplicação nem modificou containers de outras aplicações.
+Aplicação pública na VPS, servida pelo Cloudflare Tunnel da VPS. O banco continua sendo `VTXMkting` no container `postgres_main` do servidor local sv01. Este guia descreve a topologia atual e o procedimento de atualização.
 
 ## O que já foi aplicado no banco
 
@@ -10,19 +10,26 @@ Aplicação pública na VPS, servida pelo Cloudflare Tunnel da VPS. O banco cont
 - View `fontes_publicas` retorna apenas URLs, contagens e hashes das fontes, sem liberar JSONB bruto do histórico.
 - `.env` local agora usa essa conta. `.env.deploy` contém a senha para configurar no Portainer. `.env.admin` é uma cópia privada da configuração anterior, guardada localmente para administração. Todos esses arquivos têm acesso restrito e são excluídos do Git, do pacote de release e do build Docker.
 
-Não reexecute `scripts/provision-readonly.mjs` no servidor atual: o usuário já existe. O script interrompe em vez de substituir credenciais existentes. As definições adicionais de views estão versionadas em `database/001-identificacao-cadastral.sql` e `database/002-fontes-publicas.sql`.
+Não reexecute `scripts/db/provision-readonly.mjs` no servidor atual: o usuário já existe. O script interrompe em vez de substituir credenciais existentes. As definições adicionais de views estão versionadas em `database/001-identificacao-cadastral.sql` e `database/002-fontes-publicas.sql`.
 
 ## 1. Topologia: aplicação na VPS, banco no sv01
 
-Frontend e API serão executados na VPS, publicados pelo único `cloudflared` da VPS. PostgreSQL permanece no servidor local `sv01` (`100.73.87.91` na Tailscale). As redes Docker listadas anteriormente pertencem ao sv01 e não devem ser utilizadas como configuração da VPS. O nome Docker `postgres_main` não resolve entre servidores.
+Frontend e API são executados na VPS, publicados pelo único `cloudflared` da VPS. PostgreSQL permanece no servidor local `sv01` (`100.73.87.91` na Tailscale). As redes Docker listadas anteriormente pertencem ao sv01 e não devem ser utilizadas como configuração da VPS. O nome Docker `postgres_main` não resolve entre servidores.
 
-Na VPS, identificar a rede do único túnel:
+Rede confirmada na VPS: `automation`, compartilhada pelo único `cloudflared`. A aplicação será conectada a essa rede, sem publicar a porta 3000. Para conferir novamente:
 
 ```sh
 docker ps --format '{{.Names}} | {{.Image}} | {{.Networks}}'
 ```
 
-A conexão ao banco deverá usar uma rota privada entre VPS e sv01, preferencialmente Tailscale com acesso restrito, ou um túnel SSH persistente. A existência do túnel no Mac não atende à VPS. Confirmar Tailscale, publicação/listener atual do PostgreSQL e acesso a partir do container antes de definir `DB_HOST` e `DB_PORT`. Se PostgreSQL escuta somente em localhost no sv01, usar um túnel SSH persistente sem publicar 5432 na Internet. Chaves SSH, host keys e reinício do túnel devem ser configurados antes de subir a aplicação.
+Conexão privada validada pelo usuário a partir de um container da VPS na rede `automation`: `100.73.87.91:15432`. PostgreSQL permanece publicado somente em `127.0.0.1:5432` no sv01. O encaminhamento é feito pelo Tailscale Serve:
+
+```sh
+sudo tailscale serve --bg --tcp=15432 tcp://127.0.0.1:5432
+tailscale serve status
+```
+
+O modo `--bg` persiste após reinícios. Não habilitar Funnel para o banco. Restringir a política de acesso da tailnet para permitir a VPS (`100.83.58.96`) acessar TCP 15432 no sv01; revisar regras amplas existentes, pois adicionar uma regra específica não revoga permissões prévias. Disponibilidade da aplicação depende do sv01, do PostgreSQL e da Tailscale.
 
 A aplicação acessará a rede do cloudflared da VPS; nenhuma rede Docker do banco local será conectada diretamente. O Compose exige o endpoint privado do banco como variável e não pressupõe que ele já exista.
 
@@ -32,13 +39,16 @@ Enviar o código e lockfile ao repositório GitHub escolhido, sem `.env`, backup
 
 ## 2. Enviar e construir a aplicação
 
-O pacote `consulta-eleitoral-to-0.1.0.tar.gz` contém o código, o lockfile, as malhas públicas, migrations e os arquivos de deploy. Não contém senhas, `node_modules`, bundles antigos ou auditorias de outros schemas.
-
-Envie o pacote usando seu SSH existente e extraia numa pasta exclusiva, por exemplo `/home/vtx/mapaeleitoral`. Na pasta extraída, execute no servidor que tem Docker:
+O código fica no repositório [Painel-Eleitoral-Tocantins](https://github.com/gabhsousa/Painel-Eleitoral-Tocantins). Depois que a versão revisada estiver publicada no GitHub, atualize o checkout exclusivo da aplicação na VPS e construa uma imagem com uma tag identificando o commit:
 
 ```sh
-docker build -t consulta-eleitoral-to:0.1.0 .
+git pull --ff-only
+APP_TAG="consulta-eleitoral-to:$(git rev-parse --short HEAD)"
+docker build -t "$APP_TAG" .
+printf '%s\n' "$APP_TAG"
 ```
+
+Use a tag exibida em `APP_IMAGE` no Portainer. Preserve a tag anterior para rollback. Não é necessário gerar ou copiar um pacote tar para esse fluxo.
 
 O Dockerfile faz `npm ci`, compila frontend e backend e remove dependências de desenvolvimento. O processo final executa JavaScript compilado diretamente, como usuário 1000, com verificação de readiness do banco.
 
@@ -50,11 +60,13 @@ Use `deploy/compose.yml` como stack Docker Compose/Standalone, não Swarm. Confi
 
 | Variável | Valor |
 |---|---|
-| `APP_IMAGE` | `consulta-eleitoral-to:0.1.0` |
-| `DB_HOST` | Endpoint privado do banco do sv01, alcançável pelo container na VPS |
-| `DB_PORT` | Porta do endpoint privado ou túnel persistente |
-| `TUNNEL_NETWORK` | Rede do único cloudflared da VPS |
+| `APP_IMAGE` | Tag do commit construída na VPS |
+| `DB_HOST` | `100.73.87.91` |
+| `DB_PORT` | `15432` |
+| `TUNNEL_NETWORK` | `automation` |
 | `PGPASSWORD` | Senha de `eleitoral_to_readonly` em `.env.deploy` |
+
+A imagem precisa existir no mesmo endpoint Docker usado pelo Portainer. O Compose usa `pull_policy: never`; desabilite também qualquer opção do Portainer de sempre baixar imagens ao recriar a stack. Se ocorrer `pull access denied`, confira a imagem local e essa opção antes de tentar novamente.
 
 O compose não tem `ports`. A aplicação fica acessível apenas nas redes internas, na porta 3000. Possui filesystem somente leitura, `cap_drop: ALL`, `no-new-privileges`, memória limitada, logs rotacionados e reinício automático. A senha é configurada no Portainer, não incluída na imagem.
 
@@ -95,4 +107,4 @@ Se o banco estiver indisponível no momento do startup, a produção não abre a
 
 Mantenha a imagem anterior e troque apenas `APP_IMAGE` na stack para reverter uma versão. Esta entrega só adicionou uma view pública e uma role de leitura; não alterou dados importados ou schemas de outras aplicações. Não remova a role enquanto houver instâncias usando-a.
 
-Depois de importar dados, reinicie a aplicação para invalidar imediatamente os caches (ou aguarde 60 segundos). Mudanças no cadastro/coordenadas exigem nova conferência; mudanças na malha exigem rebuild da imagem. Mantenha a senha de leitura fora do repositório e configure sua rotação pelo banco e Portainer em uma janela coordenada.
+Depois de importar dados, reinicie a aplicação para invalidar imediatamente os caches (ou aguarde o limite de validade de até cinco minutos do cache de mapas, mais até 60 segundos do cache do navegador). Mudanças no cadastro/coordenadas exigem nova conferência; mudanças na malha exigem rebuild da imagem. Mantenha a senha de leitura fora do repositório e configure sua rotação pelo banco e Portainer em uma janela coordenada.

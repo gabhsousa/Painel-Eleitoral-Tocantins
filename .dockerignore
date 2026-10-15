@@ -12,3 +12,7 @@ database
 .env
 .env.*
 *.log
+
+tests
+reports
+data
